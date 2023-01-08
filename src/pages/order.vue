@@ -1,16 +1,16 @@
 <template>
   <div>
-    <nav-header />
+    <order-header />
     <router-view />
     <nav-footer />
   </div>
 </template>
 
 <script>
-import NavHeader from '@/components/NavHeader.vue'
 import NavFooter from '@/components/NavFooter.vue'
+import OrderHeader from '@/components/OrderHeader.vue'
 export default {
-  components: { NavHeader,NavFooter}
+  components: { NavFooter, OrderHeader}
 
 }
 </script>

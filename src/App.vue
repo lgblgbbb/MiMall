@@ -6,7 +6,18 @@
 
 <script>
 export default {
-  name: "App",
+    name: "App",
+  data(){
+    return{
+      res:{}
+    }
+  },
+  mounted(){
+    this.axios.get('/login/user').then((result)=>{
+      console.log(result);
+      // console.log(this.res);
+    })
+  }
 };
 </script>
 

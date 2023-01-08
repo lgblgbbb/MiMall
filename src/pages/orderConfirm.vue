@@ -1,5 +1,7 @@
 <template>
-    <div>cart</div>
+  <div>
+    confirm
+  </div>
 </template>
 
 <script>
