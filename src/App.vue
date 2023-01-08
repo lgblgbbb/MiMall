@@ -12,22 +12,15 @@ export default {
       res:{}
     }
   },
-  mounted(){
-    this.axios.get('/login/user').then((result)=>{
-      console.log(result);
-      // console.log(this.res);
-    })
-  }
+  // mounted(){
+  //   this.axios.get('/login/user').then((result)=>{
+  //     console.log(result);
+  //     // console.log(this.res);
+  //   })
+  // }
 };
 </script>
 
 <style>
-#app {
-  font-family: Avenir, Helvetica, Arial, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  text-align: center;
-  color: #2c3e50;
-  margin-top: 60px;
-}
+@import './assets/scss/reset.scss'
 </style>

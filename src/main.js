@@ -5,8 +5,8 @@ import axios from 'axios'
 import VueAxios from 'vue-axios'
 
 // 根据前端的跨域方式做调整
-axios.defaults.baseURL = ' https://mock.mengxuegu.com/mock/63ba6b5c0743af0df9523593/api'
-// axios.defaults.baseURL = '/api'
+// axios.defaults.baseURL = ' https://mock.mengxuegu.com/mock/63ba6b5c0743af0df9523593/api'
+axios.defaults.baseURL = '/api'
 axios.defaults.timeout = 8000
 
 // 接口错误拦截
