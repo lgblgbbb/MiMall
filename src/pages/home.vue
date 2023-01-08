@@ -2,7 +2,7 @@
   <div>
     <nav-header />
     <router-view />
-    <!-- <nav-footer /> -->
+    <nav-footer />
   </div>
 </template>
 
