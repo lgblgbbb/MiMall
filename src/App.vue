@@ -6,23 +6,31 @@
 
 <script>
 export default {
-    name: "App",
-  data(){
-    return{
-      res:{}
-    }
+  name: "App",
+  data() {
+    return {
+      res: {},
+    };
   },
-  // mounted(){
-  //   this.axios.get('/login/user').then((result)=>{
-  //     console.log(result);
-  //     // console.log(this.res);
-  //   })
-  // }
+  mounted() {
+    this.getUser();
+    this.getCartCount();
+  },
+  methods: {
+    getUser() {
+      this.axios.get("/user").then((res) => {
+        this.$store.dispatch("saveUserName", res.username);
+      });
+    },
+    getCartCount() {
+      this.axios.get("/carts/products/sum").then((res) => {
+        this.$store.dispatch("saveCartCount", res);
+      });
+    },
+  },
 };
 </script>
 
 <style lang="scss">
-@import './assets/scss/reset.scss';
-
-
+@import "./assets/scss/reset.scss";
 </style>

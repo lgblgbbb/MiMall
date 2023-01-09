@@ -13,7 +13,7 @@
             <a href="javascript:;" v-if="username">{{username}}</a>
             <a href="javascript:;" v-if="!username" @click="login">登录</a>
             <a href="javascript:;" v-if="username">我的订单</a>
-            <a href="javascript:;" class="my-cart" @click="goTocart"><span class="icon-cart"></span>购物车(0)</a
+            <a href="javascript:;" class="my-cart" @click="goTocart"><span class="icon-cart"></span>购物车({{cartCount}})</a
             >
           </div>
         </div>
@@ -65,8 +65,15 @@ export default {
   name: "nav-header",
   data(){
     return{
-        username:'',
         phoneList:[]
+    }
+  },
+  computed:{
+    username(){
+      return this.$store.state.username
+    },
+    cartCount(){
+      return this.$store.state.cartCount
     }
   },
   filters:{
@@ -125,10 +132,10 @@ export default {
         background-color: #ff6600;
         text-align: center;
         color: #ffff;
+        margin-right:0 ;
         .icon-cart {
           width: 16px;
           height: 12px;
-
           background-size: contain;
           margin-right: 4px;
         }
