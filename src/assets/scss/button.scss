@@ -7,10 +7,12 @@
   color: $colorG;
   border: none;
   cursor: pointer;
+  
 }
 
 .btn-default {
   background-color: #b0b0b0;
+  margin-left: 40px;
   color: $colorG;
 }
 
@@ -35,6 +37,7 @@
     }
   }
   .cancel-btn {
+    // margin-left: 100px;
     background-color: #b0b0b0;
   }
 }

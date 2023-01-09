@@ -10,7 +10,7 @@
                 <ul v-for="(item, index) in menuList" :key="index">
                   <li v-for="(sub, sIndex) in item" :key="sIndex">
                     <a :href="sub ? '/#/product/' + sub.id : ''">
-                      <img :src="sub ? sub.img : '/imgs/item-box-1.png'" />
+                      <img v-lazy="sub ? sub.img : '/imgs/item-box-1.png'" />
                       {{ sub ? sub.name : "小米CC9" }}
                     </a>
                   </li>
@@ -50,7 +50,7 @@
         <swiper :options="swiperOption" ref="mySwiper">
           <swiper-slide v-for="(item, index) in slideList" :key="index">
             <a :href="'/#/product/' + item.id">
-              <img :src="item.img" />
+              <img v-lazy="item.img" />
             </a>
           </swiper-slide>
           <div class="swiper-pagination" slot="pagination"></div>
@@ -65,12 +65,12 @@
           v-for="(item, index) in adsList"
           :key="index"
         >
-          <img :src="item.img" alt="" />
+          <img v-lazy="item.img" alt=""  :key="item.img"/>
         </a>
       </div>
       <div class="banner">
         <a href="/#/product/30">
-          <img src="../../public/imgs/banner-1.png" alt="" />
+          <img v-lazy="'/imgs/banner-1.png'" alt="" />
         </a>
       </div>
     </div>
@@ -80,20 +80,20 @@
         <div class="wrapper">
           <div class="banner-left">
             <a href="/#/product/35">
-              <img src="../../public/imgs/mix-alpha.jpg" alt="" />
+              <img v-lazy="'/imgs/mix-alpha.jpg'" alt="" />
             </a>
           </div>
           <div class="list-box">
             <div class="list" v-for="(arr, i) in phoneList" :key="i">
               <div class="item" v-for="(item, index) in arr" :key="index">
-                <span :class="{'new-pro':index%2==0}">新品</span>
+                <span :class="{ 'new-pro': index % 2 == 0 }">新品</span>
                 <div class="item-img">
-                  <img :src="item.mainImage"" alt="" />
+                  <img v-lazy="item.mainImage"" alt="" />
                 </div>
                 <div class="item-info">
-                  <h3>{{item.name}}</h3>
-                  <p>{{item.subtitle}}</p>
-                  <p class="price">{{item.price}}元</p>
+                  <h3>{{ item.name }}</h3>
+                  <p>{{ item.subtitle }}</p>
+                  <p class="price" @click="addCart(item.id)">{{ item.price }}元</p>
                 </div>
               </div>
             </div>
@@ -103,11 +103,25 @@
       </div>
     </div>
     <service-bar></service-bar>
+    <Modal
+      title="提示"
+      sureText="查看购物车"
+      btnType="1"
+      modalType="middle"
+      :showModal="showModal"
+      @submit="gotoCart"
+      @cancel="showModal = false"
+    >
+    <template v-slot:body>
+      <p>商品添加成功!</p>
+    </template>
+    </Modal>
   </div>
 </template>
 
 <script>
 import ServiceBar from "@/components/ServiceBar.vue";
+import Modal from "@/components/Modal.vue";
 import { Swiper, SwiperSlide } from "vue-awesome-swiper";
 import "swiper/css/swiper.css";
 export default {
@@ -198,24 +212,33 @@ export default {
         },
       ],
       phoneList: [],
+      showModal:false
     };
   },
-  components: { Swiper, SwiperSlide, ServiceBar },
-  methods:{
-    init(){
-      this.axios.get('/products',{
-        params:{
-          categoryId:100012,
-          pageSize:14
-        }
-      }).then((res)=>{
-         this.phoneList = [res.list.slice(6,10),res.list.slice(10,14)]
-      })
+  components: { Swiper, SwiperSlide, ServiceBar, Modal },
+  methods: {
+    init() {
+      this.axios
+        .get("/products", {
+          params: {
+            categoryId: 100012,
+            pageSize: 14,
+          },
+        })
+        .then((res) => {
+          this.phoneList = [res.list.slice(6, 10), res.list.slice(10, 14)];
+        });
+    },
+    addCart(id){
+      this.showModal = true
+    },
+    gotoCart(){
+      this.$router.push('/cart')
     }
   },
-  mounted(){
-    this.init()
-  }
+  mounted() {
+    this.init();
+  },
 };
 </script>
 
@@ -354,18 +377,18 @@ export default {
             height: 302px;
             background-color: $colorG;
             text-align: center;
-            span{
+            span {
               display: inline-block;
               width: 67px;
               height: 24px;
               font-size: 14px;
               line-height: 24px;
               color: #fff;
-              &.new-pro{
-                background-color: #7ECF68;
+              &.new-pro {
+                background-color: #7ecf68;
               }
-              &.kill-pro{
-                background-color: #E82626;
+              &.kill-pro {
+                background-color: #e82626;
               }
             }
             .item-img {

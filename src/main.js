@@ -3,6 +3,7 @@ import App from './App.vue'
 import router from './router'
 import axios from 'axios'
 import VueAxios from 'vue-axios'
+import VueLazyLoad from 'vue-lazyload'
 
 // 根据前端的跨域方式做调整
 // axios.defaults.baseURL = ' https://mock.mengxuegu.com/mock/63ba6b5c0743af0df9523593/api'
@@ -23,6 +24,9 @@ axios.interceptors.response.use(function(response){
 
 
 Vue.use(VueAxios,axios)
+Vue.use(VueLazyLoad,{
+  loading:'/imgs/loading-svg/loading-bars.svg'
+})
 Vue.config.productionTip = false
 
 new Vue({
