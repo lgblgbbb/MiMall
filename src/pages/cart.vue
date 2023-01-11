@@ -42,9 +42,9 @@
               <div class="item-price">{{ item.productPrice }}</div>
               <div class="item-num">
                 <div class="num-box">
-                  <a href="javascript:;" @click="updateCart(item,'-')">-</a>
+                  <a href="javascript:;" @click="updateCart(item, '-')">-</a>
                   <span>{{ item.quantity }}</span>
-                  <a href="javascript:;" @click="updateCart(item,'+')">+</a>
+                  <a href="javascript:;" @click="updateCart(item, '+')">+</a>
                 </div>
               </div>
               <div class="item-total">{{ item.productTotalPrice }}</div>
@@ -93,6 +93,7 @@ export default {
     getCartList() {
       this.axios.get("/carts").then((res) => {
         this.renderData(res);
+        console.log(res);
       });
     },
     // 控制全选
@@ -105,7 +106,7 @@ export default {
     // 重新渲染数据
     renderData(res) {
       this.list = res.cartProductVoList || [];
-      this.allChecked = res.selectedAll;
+      this.allChecked = res.cartProductVoList.length<1? false:res.selectedAll;
       this.cartTotalPrice = res.cartTotalPrice;
       this.checkedNum = this.list.filter((item) => item.productSelected).length;
     },
@@ -115,41 +116,56 @@ export default {
       let selected = item.productSelected;
       if (type == "-") {
         if (quantity == 1) {
-          alert("至少保留一件");
-          return
+          this.$message({
+            message: "至少保留一件",
+            type: "warning",
+          });
+          return;
         }
-        --quantity
-      }else if(type == '+'){
-        if(quantity > item.productStock){
-            alert('商品超过库存数量了')
-            return
+        --quantity;
+      } else if (type == "+") {
+        if (quantity > item.productStock) {
+          this.$message({
+          message: "商品超过库存数量了",   
+          type:'warning'
+          });
+          return;
         }
-        ++quantity
-      }else{
-        selected = !item.productSelected
+        ++quantity;
+      } else {
+        selected = !item.productSelected;
       }
-      this.axios.put(`/carts/${item.productId}`,{
-        quantity,
-        selected
-      }).then((res)=>{
-        this.renderData(res)
-      })
+      this.axios
+        .put(`/carts/${item.productId}`, {
+          quantity,
+          selected,
+        })
+        .then((res) => {
+          this.renderData(res);
+        });
     },
     // 删除商品
-    delProduct(item){
-        this.axios.delete(`/carts/${item.productId}`).then((res)=>{
-            this.renderData(res)
-        })
+    delProduct(item) {
+      this.axios.delete(`/carts/${item.productId}`).then((res) => {
+        this.renderData(res)
+        this.$message({
+          message: "删除成功",
+          type: "success",
+        });
+      });
     },
     // 购物车下单
-    order(){
-        let isCheck = this.list.every(item=>!item.productSelected)
-        if(isCheck){
-            alert('至少选中一件商品')
-        }else{
-            this.$router.push('/order/confirm')
-        }
-    }
+    order() {
+      let isCheck = this.list.every((item) => !item.productSelected);
+      if (isCheck) {
+        this.$message({
+          message: "你没有选中商品",
+          type: "warning",
+        });
+      } else {
+        this.$router.push("/order/confirm");
+      }
+    },
   },
 };
 </script>

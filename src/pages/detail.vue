@@ -133,7 +133,11 @@ export default {
       }).then((res={cartProductVoList:0})=>{
         console.log(res,222);
         this.$store.dispatch('saveCartCount',res.cartTotalQuantity)
-        // this.$router.push('/carts')
+        this.$message({
+          message: '加入购物车成功',
+          type: 'success'
+        });
+        // this.$router.push('/cart')
       })
     }
   }

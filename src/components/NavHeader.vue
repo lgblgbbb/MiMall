@@ -10,10 +10,12 @@
             <a href="javascript:;">协议规则</a>
           </div>
           <div class="topbar-user">
-            <a href="javascript:;" v-if="username">{{username}}</a>
+            <a href="javascript:;" v-if="username">{{ username }}</a>
             <a href="javascript:;" v-if="!username" @click="login">登录</a>
+            <a href="javascript:;" v-else @click="logout">退出</a>
             <a href="javascript:;" v-if="username">我的订单</a>
-            <a href="javascript:;" class="my-cart" @click="goTocart"><span class="icon-cart"></span>购物车({{cartCount}})</a
+            <a href="javascript:;" class="my-cart" @click="goTocart"
+              ><span class="icon-cart"></span>购物车({{ cartCount }})</a
             >
           </div>
         </div>
@@ -29,13 +31,17 @@
             <span>小米手机</span>
             <div class="children">
               <ul>
-                <li class="product" v-for="(item,index) in phoneList" :key="index">
-                  <a :href="'/#/product/'+item.id" target="_blank">
+                <li
+                  class="product"
+                  v-for="(item, index) in phoneList"
+                  :key="index"
+                >
+                  <a :href="'/#/product/' + item.id" target="_blank">
                     <div class="pro-img">
                       <img :src="item.mainImage" alt="" />
                     </div>
-                    <div class="pro-name">{{item.name}}</div>
-                    <div class="pro-price">{{item.price | currency}}</div>
+                    <div class="pro-name">{{ item.name }}</div>
+                    <div class="pro-price">{{ item.price | currency }}</div>
                   </a>
                 </li>
               </ul>
@@ -63,49 +69,69 @@
 <script>
 export default {
   name: "nav-header",
-  data(){
-    return{
-        phoneList:[]
-    }
+  data() {
+    return {
+      phoneList: [],
+    };
   },
-  computed:{
-    username(){
-      return this.$store.state.username
+  computed: {
+    username() {
+      return this.$store.state.username;
     },
-    cartCount(){
-      return this.$store.state.cartCount
-    }
-  },
-  filters:{
-    currency(val){
-        if(!val) return '0.00'
-        return '￥' + val.toFixed(2) + '元'
-    }
-  },
-  mounted(){
-    this.getProductList()
-  },
-  methods:{
-    login(){
-        this.$router.push('/login')
+    cartCount() {
+      return this.$store.state.cartCount;
     },
-    getProductList(){
-        this.axios.get('/products',{
-            params:{
-                categoryId:'100012',
-                // pageSize:6
-            }
-        }).then((res)=>{
-            console.log(res.list);
-           if(res.list.length>=6){
-            this.phoneList = res.list.slice(0,6)
-           }
+  },
+  filters: {
+    currency(val) {
+      if (!val) return "0.00";
+      return "￥" + val.toFixed(2) + "元";
+    },
+  },
+  mounted() {
+    let params = this.$route.params;
+    this.getProductList();
+    if (params && params.from == "login") {
+      this.getCartCount()
+    }
+  },
+  methods: {
+    login() {
+      this.$router.push("/login");
+    },
+    getProductList() {
+      this.axios
+        .get("/products", {
+          params: {
+            categoryId: "100012",
+            // pageSize:6
+          },
         })
+        .then((res) => {
+          console.log(res.list);
+          if (res.list.length >= 6) {
+            this.phoneList = res.list.slice(0, 6);
+          }
+        });
     },
-    goTocart(){
-        this.$router.push('/cart')
-    }
-  }
+    goTocart() {
+      this.$router.push("/cart");
+    },
+    logout() {
+      this.axios.post("/user/logout").then(() => {
+        this.$message.success("退出成功");
+        this.$cookie.set("userId", "", { expires: "-1" });
+        this.$store.dispatch("saveUserName", "");
+        this.$store.dispatch("saveCartCount", "0");
+      });
+    },
+    getCartCount() {
+      // res 默认是0
+      this.axios.get("/carts/products/sum").then((res = 0) => {
+        this.$store.dispatch("saveCartCount", res);
+      });
+    },
+  },
 };
 </script>
 
@@ -132,7 +158,7 @@ export default {
         background-color: #ff6600;
         text-align: center;
         color: #ffff;
-        margin-right:0 ;
+        margin-right: 0;
         .icon-cart {
           width: 16px;
           height: 12px;
@@ -280,7 +306,6 @@ export default {
             }
           }
         }
-        
       }
     }
   }

@@ -13,19 +13,21 @@ export default {
     };
   },
   mounted() {
-    this.getUser();
-    this.getCartCount();
+    if (this.$cookie.get("userId")) {
+      this.getUser();
+      this.getCartCount();
+    }
   },
   methods: {
     getUser() {
       // res={} 默认值是对象
-      this.axios.get("/user").then((res={}) => {
+      this.axios.get("/user").then((res = {}) => {
         this.$store.dispatch("saveUserName", res.username);
       });
     },
     getCartCount() {
       // res 默认是0
-      this.axios.get("/carts/products/sum").then((res=0) => {
+      this.axios.get("/carts/products/sum").then((res = 0) => {
         this.$store.dispatch("saveCartCount", res);
       });
     },

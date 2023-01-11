@@ -6,11 +6,10 @@
           <a href="/#/index"></a>
         </div>
         <div class="title">
-          <h2>{{title}}<slot name="tip"></slot>
-          </h2>
+          <h2>{{ title }}<slot name="tip"></slot></h2>
         </div>
         <div class="username">
-          <a href="javascript:;">{{username}}</a>
+          <a href="javascript:;">{{ username }}</a>
         </div>
       </div>
     </div>
@@ -18,19 +17,20 @@
 </template>
 
 <script>
-import {mapState} from 'vuex'
+import { mapState } from "vuex";
 export default {
   name: "order-header",
   props: ["title"],
-  computed:{
-    ...mapState(['username'])
-  }
+  computed: {
+    ...mapState(["username"]),
+  },
 };
 </script>
 
 <style lang="scss" scoped>
 .order-header {
   padding: 30px 0;
+  border-bottom: 2px solid #ff6600;
   .content {
     display: flex;
     justify-content: space-between;
@@ -73,14 +73,16 @@ export default {
       line-height: 55px;
     }
     .title {
-      font-size: 20px;
-      color: #333;
       margin-right: 150px;
+      h2 {
+        font-size: 28px;
+        color: #333;
+      }
       span {
         font-size: 14px;
         margin-left: 17px;
         color: #999;
-        font-weight: bold;
+        font-weight: 400;
       }
     }
     .username {
