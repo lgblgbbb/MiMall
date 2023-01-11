@@ -170,7 +170,7 @@ export default {
 };
 </script>
 
-<style lang="scss" scoped>
+<style lang="scss">
 @import "../assets/scss/config.scss";
 @import "../assets/scss/mixin.scss";
 .warn {
