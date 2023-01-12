@@ -1,5 +1,10 @@
 <template>
   <div class="order-pay">
+    <order-header title="订单支付">
+      <template v-slot:tip>
+        <span>支付您的订单</span>
+      </template>
+    </order-header>
     <div class="wrapper">
       <div class="container">
         <div class="order-wrap">
@@ -11,7 +16,7 @@
                 请在
                 <span>30分</span>内完成支付, 超时后将取消订单
               </p>
-              <p>收货信息：{{addressInfo}}</p>
+              <p>收货信息：{{ addressInfo }}</p>
             </div>
             <div class="order-total">
               <p>
@@ -20,26 +25,30 @@
               </p>
               <p>
                 订单详情
-                <em class="icon-down" :class="{'up': showDetail}" @click="showDetail=!showDetail"></em>
+                <em
+                  class="icon-down"
+                  :class="{ up: showDetail }"
+                  @click="showDetail = !showDetail"
+                ></em>
               </p>
             </div>
           </div>
           <div class="item-detail" v-if="showDetail">
             <div class="item">
               <div class="detail-title">订单号：</div>
-              <div class="detail-info theme-color">{{orderId}}</div>
+              <div class="detail-info theme-color">{{ orderId }}</div>
             </div>
             <div class="item">
               <div class="detail-title">收货信息：</div>
-              <div class="detail-info">{{addressInfo}}</div>
+              <div class="detail-info">{{ addressInfo }}</div>
             </div>
             <div class="item good">
               <div class="detail-title">商品名称：</div>
               <div class="detail-info">
                 <ul>
-                  <li v-for="(item,index) in orderDetail" :key="index">
+                  <li v-for="(item, index) in orderDetail" :key="index">
                     <img v-lazy="item.productImage" />
-                    {{item.productName}}
+                    {{ item.productName }}
                   </li>
                 </ul>
               </div>
@@ -54,13 +63,25 @@
           <h3>选择以下支付方式付款</h3>
           <div class="pay-way">
             <p>支付平台</p>
-            <div class="pay pay-ali" :class="{'checked': payType === 1}" @click="paySubmit(1)"></div>
-            <div class="pay pay-wechat" :class="{'checked': payType === 2}" @click="paySubmit(2)"></div>
+            <div
+              class="pay pay-ali"
+              :class="{ checked: payType === 1 }"
+              @click="paySubmit(1)"
+            ></div>
+            <div
+              class="pay pay-wechat"
+              :class="{ checked: payType === 2 }"
+              @click="paySubmit(2)"
+            ></div>
           </div>
         </div>
       </div>
     </div>
-    <scan-pay-code v-if="showPay" @close="closePayModal" :img="payImg"></scan-pay-code>
+    <scan-pay-code
+      v-if="showPay"
+      @close="closePayModal"
+      :img="payImg"
+    ></scan-pay-code>
     <modal
       title="支付确认"
       btnType="3"
@@ -69,8 +90,8 @@
       cancelText="未支付"
       @cancel="showPayModal = false"
       @submit="goOrderList"
-      >
-       <template v-slot:body>
+    >
+      <template v-slot:body>
         <p>您确认是否完成支付？</p>
       </template>
     </modal>
@@ -82,72 +103,72 @@
 import OrderHeader from "../components/OrderHeader";
 import ScanPayCode from "../components/ScanPayCode";
 import Modal from "../components/Modal";
-import QRCode from 'qrcode';
+import QRCode from "qrcode";
 export default {
   name: "order-pay",
   components: {
     OrderHeader,
     ScanPayCode,
-    Modal
+    Modal,
   },
   data() {
     return {
       orderId: this.$route.query.orderNo, // 从路由中获取参数
-      addressInfo:'', // 收货人地址
-      orderDetail:[], // 订单详情，包含商品列表
+      addressInfo: "", // 收货人地址
+      orderDetail: [], // 订单详情，包含商品列表
       payment: 0, // 订单总金额
       showDetail: false, // 是否显示订单详情
-      payType: '', // 支付方式
+      payType: "", // 支付方式
       showPay: false, // 是否显示微信支付弹框
-      payImg: '', // 微信支付的二维码地址
+      payImg: "", // 微信支付的二维码地址
       showPayModal: false, // 是否显示二次支付确认弹框
       timerId: 0, // 定时器标识
       curTime: 0, // 发起支付的时间
-    }
-  },  
+    };
+  },
   mounted() {
     this.getOrderDetail();
   },
   methods: {
     // 获取订单详情
     getOrderDetail() {
-      this.axios.get(`/orders/${this.orderId}`)
-        .then(res => {
-            console.log(res);
-          let item = res.shippingVo;
-          this.addressInfo = `${item.receiverName} ${item.receiverMobile} ${item.receiverProvince} ${item.receiverCity} ${item.receiverDistrict} ${item.receiverAddress}`;
-          this.payment = res.payment;
-          this.orderDetail = res.orderItemVoList;
-        })
+      this.axios.get(`/orders/${this.orderId}`).then((res) => {
+        console.log(res);
+        let item = res.shippingVo;
+        this.addressInfo = `${item.receiverName} ${item.receiverMobile} ${item.receiverProvince} ${item.receiverCity} ${item.receiverDistrict} ${item.receiverAddress}`;
+        this.payment = res.payment;
+        this.orderDetail = res.orderItemVoList;
+      });
     },
     // 支付
     paySubmit(payType) {
       // 支付宝支付
       if (payType === 1) {
         this.payType = payType;
-        window.open('/#/order/alipay?orderId=' + this.orderId, '_blank');
+        window.open("/#/order/alipay?orderId=" + this.orderId, "_blank");
       } else {
         this.payType = payType;
         // 微信支付
-        this.axios.post('/pay', {
-          orderId: this.orderId,
-          orderName: 'Vue高仿小米商城',
-          amount: 0.01,
-          payType: 2
-        }).then((res) => {
-          QRCode.toDataURL(res.content)
-            .then(url => {
-              this.payImg = url;
-              this.showPay = true;
-              this.curTime = Date.now();
-              this.loopOrderState();
-            })
-            .catch(() => {
-              this.$message.error('操作频繁, 请稍后重试!');
-            })
-        })
+        this.axios
+          .post("/pay", {
+            orderId: this.orderId,
+            orderName: "Vue高仿小米商城",
+            amount: 0.01,
+            payType: 2,
+          })
+          .then((res) => {
+            QRCode.toDataURL(res.content)
+              .then((url) => {
+                this.payImg = url;
+                this.showPay = true;
+                this.curTime = Date.now();
+                this.loopOrderState();
+              })
+              .catch(() => {
+                this.$message.error("操作频繁, 请稍后重试!");
+              });
+          });
       }
-      
     },
     // 关闭微信支付弹框
     closePayModal() {
@@ -160,25 +181,24 @@ export default {
       this.timerId = setInterval(() => {
         // 用户长时间不进行支付操作, 取消支付
         let nowTime = Date.now();
-          if (nowTime - this.curTime > 7000) {
-            this.$message.error('超过支付时间!');
-            this.closePayModal();
-            return;
+        if (nowTime - this.curTime > 7000) {
+          this.$message.error("超过支付时间!");
+          this.closePayModal();
+          return;
+        }
+        this.axios.get(`/orders/${this.orderId}`).then((res) => {
+          if (res.status == 20) {
+            clearInterval(this.timerId);
+            this.goOrderList();
           }
-        this.axios.get(`/orders/${this.orderId}`)
-          .then(res => {
-            if (res.status == 20) {
-              clearInterval(this.timerId);
-              this.goOrderList();
-            }
-          })
+        });
       }, 2000);
     },
     // 查看订单列表
     goOrderList() {
-      this.$router.push('/order/list');
-    }
-  }
+      this.$router.push("/order/list");
+    },
+  },
 };
 </script>
 
@@ -285,7 +305,7 @@ export default {
             margin-left: 20px;
           }
           &.checked {
-          @include bd(1px, solid, $colorA);
+            @include bd(1px, solid, $colorA);
           }
         }
         .pay-ali {
@@ -294,7 +314,8 @@ export default {
           margin-top: 19px;
         }
         .pay-wechat {
-          background: url("../../public/imgs/pay/icon-wechat.png") no-repeat center;
+          background: url("../../public/imgs/pay/icon-wechat.png") no-repeat
+            center;
           background-size: 103px 38px;
         }
       }
