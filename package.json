@@ -12,6 +12,7 @@
     "core-js": "^3.8.3",
     "element-ui": "^2.15.12",
     "node-sass": "^8.0.0",
+    "qrcode": "^1.5.1",
     "sass-loader": "^13.2.0",
     "swiper": "^5.4.5",
     "vue": "^2.6.14",
