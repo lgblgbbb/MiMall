@@ -12,5 +12,13 @@ module.exports = defineConfig({
         }
       }
     }
+  },
+  // 设置根路径
+  // "publicPath":'/app'
+  // 是否给查看源码
+  productionSourceMap:false,
+  // 删除预加载，真正按需加载
+  chainWebpack:(config)=>{
+    config.plugins.delete('prefetch')
   }
 })
